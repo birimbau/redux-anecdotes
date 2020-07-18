@@ -11,10 +11,16 @@ export const initializeAnecdotes = () => {
   };
 };
 
-export const vote = (id) => ({
-  type: 'VOTE',
-  data: { id },
-});
+export const vote = (data) => {
+  return async (dispatch) => {
+    const resp = await anecdoteService.edit(data);
+
+    dispatch({
+      type: 'VOTE',
+      data: resp,
+    });
+  };
+};
 
 export const add = (content) => {
   return async (dispatch) => {
@@ -33,10 +39,7 @@ const reducer = (state = anecdotesAtStart, action) => {
     case 'VOTE':
       return state.map((anecdote) => {
         if (anecdote.id === action.data.id) {
-          return {
-            ...anecdote,
-            votes: anecdote.votes + 1,
-          };
+          return action.data;
         }
         return anecdote;
       });

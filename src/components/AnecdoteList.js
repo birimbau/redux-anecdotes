@@ -2,8 +2,8 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { vote as voteAction } from '../reducers/anecdoteReducer';
 import {
-  add as addNotification,
   remove as removeNotification,
+  setNotification,
 } from '../reducers/notificationReducer';
 
 const AnecdoteList = () => {
@@ -13,9 +13,9 @@ const AnecdoteList = () => {
   });
   const dispatch = useDispatch();
 
-  const vote = (id, content) => {
-    dispatch(voteAction(id));
-    dispatch(addNotification(`You voted for '${content}'`));
+  const vote = (model, content) => {
+    dispatch(voteAction(model));
+    dispatch(setNotification(`You voted for '${content}'`, 5));
 
     setTimeout(() => {
       removeNotification();
@@ -41,7 +41,7 @@ const AnecdoteList = () => {
             <div>{anecdote.content}</div>
             <div>
               has {anecdote.votes}
-              <button onClick={() => vote(anecdote.id, anecdote.content)}>
+              <button onClick={() => vote(anecdote, anecdote.content)}>
                 vote
               </button>
             </div>
