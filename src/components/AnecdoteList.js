@@ -1,25 +1,16 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, connect } from 'react-redux';
 import { vote as voteAction } from '../reducers/anecdoteReducer';
-import {
-  remove as removeNotification,
-  setNotification,
-} from '../reducers/notificationReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
-const AnecdoteList = () => {
-  const filter = useSelector((state) => state.filter);
-  const anecdotes = useSelector((state) => state.anecdotes).filter((x) => {
-    return x.content.includes(filter);
+const AnecdoteList = (props) => {
+  const anecdotes = useSelector((state) => props.anecdotes).filter((x) => {
+    return x.content.includes(props.filter);
   });
-  const dispatch = useDispatch();
 
   const vote = (model, content) => {
-    dispatch(voteAction(model));
-    dispatch(setNotification(`You voted for '${content}'`, 5));
-
-    setTimeout(() => {
-      removeNotification();
-    }, 5000);
+    props.vote(model);
+    props.setNotification(`You voted for '${content}'`, 5);
   };
   return (
     <>
@@ -51,4 +42,19 @@ const AnecdoteList = () => {
   );
 };
 
-export default AnecdoteList;
+const mapStateToProps = (state) => {
+  return {
+    filter: state.filter,
+    anecdotes: state.anecdotes,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    vote: (value) => dispatch(voteAction(value)),
+    setNotification: (text, timeOut) =>
+      dispatch(setNotification(text, timeOut)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdoteList);

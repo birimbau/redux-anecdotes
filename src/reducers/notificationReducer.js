@@ -1,5 +1,5 @@
 const initialState = '';
-
+let timer = null;
 export const add = (data) => ({
   type: 'ADD_NOTIFICATION',
   data,
@@ -11,10 +11,11 @@ export const remove = () => ({
 
 export const setNotification = (text, timeOut = 10) => {
   return async (dispatch) => {
-    dispatch(add(text));
-    setTimeout(() => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
       dispatch(remove());
     }, timeOut * 1000);
+    dispatch(add(text));
   };
 };
 
